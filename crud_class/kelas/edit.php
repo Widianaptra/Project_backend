@@ -210,17 +210,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="form-group">
+<<<<<<< HEAD
             <label>Deskripsi</label>
             <textarea name="deskripsi"><?= htmlspecialchars($kelas['deskripsi']) ?></textarea>
+=======
+            <label for="deskripsi">Deskripsi Kelas</label>
+            <textarea id="deskripsi" name="deskripsi"><?= htmlspecialchars($kelas_ditemukan['deskripsi']); ?></textarea>
+>>>>>>> a1cff84 (Perbaikan CRUD kelas)
         </div>
 
         <div class="btn-group">
             <a href="index.php" class="btn btn-kembali">Batal</a>
             <button type="submit" class="btn btn-update">Update Kelas</button>
         </div>
+<<<<<<< HEAD
 
     </form>
 
+=======
+    </form>
+>>>>>>> a1cff84 (Perbaikan CRUD kelas)
 </div>
 
 </body>
