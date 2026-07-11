@@ -41,10 +41,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
 
         $error = "Nama kelas, kuota, dan nama trainer wajib diisi.";
+=======
+
+include '../class/kelas.php';
+
+$error="";
+
+if($_SERVER["REQUEST_METHOD"]=="POST"){
+
+    $nama=trim($_POST['nama_kelas']);
+    $deskripsi=trim($_POST['deskripsi']);
+    $kuota=trim($_POST['kuota']);
+    $trainer=trim($_POST['nama_trainer']);
+
+    if($nama!="" && $kuota!="" && $trainer!=""){
+
+        $kelas=new Kelas();
+
+        if($kelas->create($nama,$deskripsi,$kuota,$trainer)){
+
+            header("Location:index.php?success=1");
+            exit;
+
+        }else{
+
+            $error="Gagal menyimpan data.";
+
+        }
+
+    }else{
+
+        $error="Semua data wajib diisi.";
+>>>>>>> ff4c6c0 (update kelas)
 
     }
 
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -201,3 +234,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 </html>
+
