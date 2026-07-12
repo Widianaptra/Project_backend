@@ -1,78 +1,56 @@
 <?php
-// Proses simpan data
-include '../config/con-db.php';
+
+require_once __DIR__ . '/class/kelas.php';
 
 $error = "";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$nama_kelas   = "";
+$deskripsi    = "";
+$hari         = "";
+$jam          = "";
+$kuota        = "";
+$nama_trainer = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $nama_kelas   = trim($_POST['nama_kelas']);
     $deskripsi    = trim($_POST['deskripsi']);
+    $hari         = trim($_POST['hari']);
+    $jam          = trim($_POST['jam']);
     $kuota        = trim($_POST['kuota']);
     $nama_trainer = trim($_POST['nama_trainer']);
 
-    // Validasi
-    if (!empty($nama_kelas) && !empty($kuota) && !empty($nama_trainer)) {
+    if (
+        $nama_kelas != "" &&
+        $hari != "" &&
+        $jam != "" &&
+        $kuota != "" &&
+        $nama_trainer != ""
+    ) {
 
-        try {
+        $kelas = new Kelas();
 
-            $sql = "INSERT INTO kelas (nama_kelas, deskripsi, kuota, nama_trainer)
-                    VALUES (:nama_kelas, :deskripsi, :kuota, :nama_trainer)";
+        if ($kelas->create(
+            $nama_kelas,
+            $deskripsi,
+            $hari,
+            $jam,
+            $kuota,
+            $nama_trainer
+        )) {
 
-            $stmt = $pdo->prepare($sql);
-
-            $stmt->execute([
-                ':nama_kelas'   => $nama_kelas,
-                ':deskripsi'    => $deskripsi,
-                ':kuota'        => $kuota,
-                ':nama_trainer' => $nama_trainer
-            ]);
-
-            // Redirect setelah berhasil
             header("Location: index_kelas.php?success=1");
             exit;
 
-        } catch (PDOException $e) {
+        } else {
 
-            $error = "Gagal menyimpan data: " . $e->getMessage();
+            $error = "Gagal menyimpan data.";
 
         }
 
     } else {
 
-        $error = "Nama kelas, kuota, dan nama trainer wajib diisi.";
-=======
-
-include '../class/kelas.php';
-
-$error="";
-
-if($_SERVER["REQUEST_METHOD"]=="POST"){
-
-    $nama=trim($_POST['nama_kelas']);
-    $deskripsi=trim($_POST['deskripsi']);
-    $kuota=trim($_POST['kuota']);
-    $trainer=trim($_POST['nama_trainer']);
-
-    if($nama!="" && $kuota!="" && $trainer!=""){
-
-        $kelas=new Kelas();
-
-        if($kelas->create($nama,$deskripsi,$kuota,$trainer)){
-
-            header("Location:index.php?success=1");
-            exit;
-
-        }else{
-
-            $error="Gagal menyimpan data.";
-
-        }
-
-    }else{
-
-        $error="Semua data wajib diisi.";
->>>>>>> ff4c6c0 (update kelas)
+        $error = "Semua data wajib diisi.";
 
     }
 
@@ -82,156 +60,222 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Kelas Baru</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-            background: #f4f7f6;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,.1);
-        }
+<title>Tambah Kelas Gym</title>
 
-        h2 {
-            margin-top: 0;
-            color: #34495e;
-        }
+<style>
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+body{
+    font-family:Arial,sans-serif;
+    margin:30px;
+    background:#f4f7f6;
+}
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
+.container{
+    max-width:650px;
+    margin:auto;
+    background:#fff;
+    padding:30px;
+    border-radius:8px;
+    box-shadow:0 2px 5px rgba(0,0,0,.1);
+}
 
-        input[type=text],
-        input[type=number],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
+h2{
+    margin-top:0;
+    color:#34495e;
+}
 
-        textarea {
-            height: 100px;
-            resize: vertical;
-        }
+.form-group{
+    margin-bottom:20px;
+}
 
-        .btn-group {
-            display: flex;
-            gap: 10px;
-        }
+label{
+    display:block;
+    margin-bottom:5px;
+    font-weight:bold;
+}
 
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            font-weight: bold;
-        }
+input[type=text],
+input[type=number],
+input[type=time],
+select,
+textarea{
 
-        .btn-simpan {
-            background: #2ecc71;
-            flex: 2;
-        }
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:4px;
+    box-sizing:border-box;
 
-        .btn-kembali {
-            background: #95a5a6;
-            flex: 1;
-        }
+}
 
-        .error-msg {
-            color: red;
-            margin-bottom: 15px;
-        }
-    </style>
+textarea{
+    height:100px;
+    resize:vertical;
+}
+
+.btn-group{
+    display:flex;
+    gap:10px;
+}
+
+.btn{
+
+    padding:12px 20px;
+    border:none;
+    border-radius:5px;
+    color:white;
+    cursor:pointer;
+    text-decoration:none;
+    text-align:center;
+    font-weight:bold;
+
+}
+
+.btn-simpan{
+    background:#2ecc71;
+    flex:2;
+}
+
+.btn-kembali{
+    background:#95a5a6;
+    flex:1;
+}
+
+.error-msg{
+    color:red;
+    margin-bottom:15px;
+}
+
+</style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-    <h2>Tambah Kelas Gym Baru</h2>
+<h2>Tambah Kelas Gym</h2>
 
-    <?php if (!empty($error)) : ?>
-        <div class="error-msg">
-            <?= htmlspecialchars($error) ?>
-        </div>
-    <?php endif; ?>
+<?php if($error!=""){ ?>
 
-    <form method="POST">
+<div class="error-msg">
 
-        <div class="form-group">
-            <label>Nama Kelas</label>
-            <input
-                type="text"
-                name="nama_kelas"
-                value="<?= isset($nama_kelas) ? htmlspecialchars($nama_kelas) : '' ?>"
-                placeholder="Masukkan nama kelas"
-                required>
-        </div>
-
-        <div class="form-group">
-            <label>Kuota Peserta</label>
-            <input
-                type="number"
-                name="kuota"
-                min="1"
-                value="<?= isset($kuota) ? htmlspecialchars($kuota) : '' ?>"
-                placeholder="Masukkan kuota peserta"
-                required>
-        </div>
-
-        <div class="form-group">
-            <label>Nama Trainer</label>
-            <input
-                type="text"
-                name="nama_trainer"
-                value="<?= isset($nama_trainer) ? htmlspecialchars($nama_trainer) : '' ?>"
-                placeholder="Masukkan nama trainer"
-                required>
-        </div>
-
-        <div class="form-group">
-            <label>Deskripsi</label>
-            <textarea
-                name="deskripsi"
-                placeholder="Masukkan deskripsi kelas"><?= isset($deskripsi) ? htmlspecialchars($deskripsi) : '' ?></textarea>
-        </div>
-
-        <div class="btn-group">
-            <a href="index.php" class="btn btn-kembali">
-                Batal
-            </a>
-
-            <button type="submit" class="btn btn-simpan">
-                Simpan Kelas
-            </button>
-        </div>
-
-    </form>
+<?= htmlspecialchars($error); ?>
 
 </div>
 
+<?php } ?>
+
+<form method="POST">
+
+<div class="form-group">
+
+<label>Nama Kelas</label>
+
+<input
+type="text"
+name="nama_kelas"
+value="<?= htmlspecialchars($nama_kelas); ?>"
+required>
+
+</div>
+
+<div class="form-group">
+
+<label>Deskripsi</label>
+
+<textarea
+name="deskripsi"><?= htmlspecialchars($deskripsi); ?></textarea>
+
+</div>
+
+<div class="form-group">
+
+<label>Hari</label>
+
+<select name="hari" required>
+
+<option value="">-- Pilih Hari --</option>
+
+<?php
+
+$hariList = [
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jumat",
+    "Sabtu",
+    "Minggu"
+];
+
+foreach($hariList as $h){
+
+?>
+
+<option
+value="<?= $h; ?>"
+<?= ($hari==$h) ? "selected" : ""; ?>>
+
+<?= $h; ?>
+
+</option>
+
+<?php } ?>
+
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>Jam</label>
+
+<input
+type="time"
+name="jam"
+value="<?= htmlspecialchars($jam); ?>"
+required>
+
+</div>
+
+<div class="form-group">
+
+<label>Kuota</label>
+
+<input
+type="number"
+name="kuota"
+min="1"
+value="<?= htmlspecialchars($kuota); ?>"
+required>
+
+</div>
+
+<div class="form-group">
+
+<label>Nama Trainer</label>
+
+<input
+type="text"
+name="nama_trainer"
+value="<?= htmlspecialchars($nama_trainer); ?>"
+required>
+
+</div>
+
+<div class="btn-group">
+<a href="index_kelas.php" class="btn btn-kembali">Batal</a>
+
+<button type="submit" class="btn btn-simpan">Simpan Kelas</button>
+</div>
+</form>
+</div>
 </body>
 </html>
-

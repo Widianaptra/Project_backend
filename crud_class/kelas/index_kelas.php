@@ -1,24 +1,10 @@
 <?php
-// Menampilkan daftar kelas
-include '../config/con-db.php';
 
-$error = "";
+require_once __DIR__ . '/class/kelas.php';
 
-try {
+$kelas = new Kelas();
+$dataKelas = $kelas->read();
 
-    $sql = "SELECT * FROM kelas ORDER BY id ASC";
-
-    $stmt = $pdo->prepare($sql);
-
-    $stmt->execute();
-
-    $list_kelas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-} catch (PDOException $e) {
-
-    $error = "Gagal mengambil data: " . $e->getMessage();
-
-}
 ?>
 
 <!DOCTYPE html>
@@ -29,97 +15,87 @@ try {
     <title>Manajemen Kelas Gym</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-            background: #f4f7f6;
+
+        body{
+            font-family:Arial,sans-serif;
+            margin:30px;
+            background:#f4f7f6;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,.1);
+        .container{
+            max-width:1200px;
+            margin:auto;
+            background:#fff;
+            padding:20px;
+            border-radius:8px;
+            box-shadow:0 2px 5px rgba(0,0,0,.1);
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        .header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:20px;
         }
 
-        h2 {
-            color: #34495e;
+        .btn{
+            padding:10px 15px;
+            text-decoration:none;
+            border-radius:5px;
+            color:white;
+            font-weight:bold;
         }
 
-        .btn {
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
+        .btn-tambah{
+            background:#2ecc71;
         }
 
-        .btn-tambah {
-            background: #2ecc71;
+        .btn-edit{
+            background:#f39c12;
+            padding:5px 10px;
+            font-size:12px;
         }
 
-        .btn-detail {
-            background: #3498db;
-            padding: 5px 10px;
-            font-size: 12px;
+        .btn-hapus{
+            background:#e74c3c;
+            padding:5px 10px;
+            font-size:12px;
         }
 
-        .btn-edit {
-            background: #f39c12;
-            padding: 5px 10px;
-            font-size: 12px;
+        table{
+            width:100%;
+            border-collapse:collapse;
         }
 
-        .btn-hapus {
-            background: #e74c3c;
-            padding: 5px 10px;
-            font-size: 12px;
+        th,td{
+            border:1px solid #ddd;
+            padding:12px;
+            text-align:center;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        th{
+            background:#34495e;
+            color:white;
         }
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
+        tr:nth-child(even){
+            background:#f9f9f9;
         }
 
-        th {
-            background: #34495e;
-            color: white;
+        .aksi-buttons{
+            display:flex;
+            justify-content:center;
+            gap:5px;
         }
 
-        tr:nth-child(even) {
-            background: #f9f9f9;
+        .success{
+            background:#d4edda;
+            color:#155724;
+            padding:12px;
+            border-radius:5px;
+            margin-bottom:20px;
         }
 
-        .aksi-buttons {
-            display: flex;
-            gap: 5px;
-        }
-
-        .error-msg {
-            color: red;
-            margin-bottom: 15px;
-        }
-
-        .success-msg {
-            color: green;
-            margin-bottom: 15px;
-        }
     </style>
 
 </head>
@@ -129,119 +105,112 @@ try {
 <div class="container">
 
     <div class="header">
+
         <h2>Daftar Kelas Gym</h2>
 
         <a href="create.php" class="btn btn-tambah">
             + Tambah Kelas Baru
         </a>
+
     </div>
 
-    <?php if (isset($_GET['success'])) : ?>
-        <div class="success-msg">
-            Data berhasil ditambahkan.
-        </div>
-    <?php endif; ?>
+    <?php if(isset($_GET['success'])): ?>
 
-    <?php if (isset($_GET['update'])) : ?>
-        <div class="success-msg">
-            Data berhasil diubah.
-        </div>
-    <?php endif; ?>
-
-    <?php if (isset($_GET['delete'])) : ?>
-        <div class="success-msg">
-            Data berhasil dihapus.
-        </div>
-    <?php endif; ?>
-
-    <?php if (!empty($error)) : ?>
-
-        <div class="error-msg">
-            <?= htmlspecialchars($error) ?>
+        <div class="success">
+            Data berhasil disimpan.
         </div>
 
-    <?php else : ?>
-
-        <table>
-
-            <thead>
-
-                <tr>
-                    <th width="5%">No</th>
-                    <th width="25%">Nama Kelas</th>
-                    <th width="40%">Deskripsi</th>
-                    <th width="10%">Durasi</th>
-                    <th width="20%">Aksi</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <?php if (count($list_kelas) > 0) : ?>
-
-                    <?php
-                    $no = 1;
-                    foreach ($list_kelas as $kelas) :
-                    ?>
-
-                        <tr>
-
-                            <td><?= $no++ ?></td>
-
-                            <td>
-                                <?= htmlspecialchars($kelas['nama_kelas']) ?>
-                            </td>
-
-                            <td>
-                                <?= htmlspecialchars($kelas['deskripsi']) ?>
-                            </td>
-
-                            <td>
-                                <?= htmlspecialchars($kelas['durasi']) ?>
-                            </td>
-
-                            <td>
-
-                                <div class="aksi-buttons">
-
-                                    <a href="read.php?id=<?= $kelas['id'] ?>" class="btn btn-detail">
-                                        Detail
-                                    </a>
-
-                                    <a href="edit.php?id=<?= $kelas['id'] ?>" class="btn btn-edit">
-                                        Edit
-                                    </a>
-
-                                    <a href="delete.php?id=<?= $kelas['id'] ?>"
-                                       class="btn btn-hapus"
-                                       onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                        Hapus
-                                    </a>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    <?php endforeach; ?>
-
-                <?php else : ?>
-
-                    <tr>
-                        <td colspan="5" style="text-align:center;">
-                            Data kelas belum tersedia.
-                        </td>
-                    </tr>
-
-                <?php endif; ?>
-
-            </tbody>
-
-        </table>
-
     <?php endif; ?>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>No</th>
+                <th>Nama Kelas</th>
+                <th>Deskripsi</th>
+                <th>Hari</th>
+                <th>Jam</th>
+                <th>Kuota</th>
+                <th>Trainer</th>
+                <th>Aksi</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        <?php if($dataKelas && $dataKelas->num_rows > 0): ?>
+
+            <?php
+            $no = 1;
+
+            while($row = $dataKelas->fetch_assoc()):
+            ?>
+
+            <tr>
+
+                <td><?= $no++; ?></td>
+
+                <td>
+                    <strong><?= htmlspecialchars($row['nama_kelas']); ?></strong>
+                </td>
+
+                <td><?= htmlspecialchars($row['deskripsi']); ?></td>
+
+                <td><?= htmlspecialchars($row['hari']); ?></td>
+
+                <td><?= date('H:i', strtotime($row['jam'])); ?></td>
+
+                <td><?= htmlspecialchars($row['kuota']); ?></td>
+
+                <td><?= htmlspecialchars($row['nama_trainer']); ?></td>
+
+                <td>
+
+                    <div class="aksi-buttons">
+
+                        <a
+                            href="edit.php?id=<?= $row['id']; ?>"
+                            class="btn btn-edit">
+                            Edit
+                        </a>
+
+                        <a
+                            href="delete.php?id=<?= $row['id']; ?>"
+                            class="btn btn-hapus"
+                            onclick="return confirm('Yakin ingin menghapus data ini?')">
+                            Hapus
+                        </a>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            <?php endwhile; ?>
+
+        <?php else: ?>
+
+            <tr>
+
+                <td colspan="8">
+
+                    Belum ada data kelas.
+
+                </td>
+
+            </tr>
+
+        <?php endif; ?>
+
+        </tbody>
+
+    </table>
 
 </div>
 
