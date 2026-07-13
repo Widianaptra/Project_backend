@@ -1,11 +1,14 @@
 <?php
 session_start();
-include "../../config/koneksi.php";
+require_once __DIR__ . '/../db_gym/config/con-db.php';
+
+$database = new Database();
+$conn = $database->getConnection();
 
 // Load PHPMailer
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-require '../../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 if (!isset($_SESSION['id'])) {
     header("Location: ../../auth/login.php");

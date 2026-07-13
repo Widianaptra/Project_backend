@@ -1,3 +1,6 @@
+<?php 
+session_start(); 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,10 +29,21 @@
                 <a href="#" class="hover:text-white transition-colors">Membership</a>
                 <a href="#" class="hover:text-white transition-colors">Contact</a>
             </div>
-            <div>
-                <button onclick="navigateTo('login-page')" class="border border-gray-700 hover:border-emerald-500 hover:text-emerald-400 px-5 py-2 rounded-xl text-sm font-semibold transition-all">
-                    Sign In
-                </button>
+           <div>
+    <?php if (isset($_SESSION['username'])): ?>
+        <!-- Jika user SUDAH login, tampilkan tombol pintas menuju dashboard mereka -->
+        <a href="./Dashboard/<?php echo (strtolower($_SESSION['role']) == 'admin') ? 'admin.php' : 'customers.php'; ?>" 
+           class="inline-block border border-emerald-500 text-emerald-400 hover:bg-emerald-950/30 px-5 py-2 rounded-xl text-sm font-semibold transition-all">
+            <i class="fa-solid fa-user-gear mr-2"></i>Dashboard (<?= htmlspecialchars($_SESSION['username']) ?>)
+        </a>
+    <?php else: ?>
+        <!-- Jika BELUM login, tampilkan tombol Sign In biasa -->
+        <a href="./auth/login.php" 
+           class="inline-block border border-gray-700 hover:border-emerald-500 hover:text-emerald-400 px-5 py-2 rounded-xl text-sm font-semibold transition-all">
+            Sign In
+        </a>
+    <?php endif; ?>
+</div>
             </div>
         </nav>
 

@@ -1,17 +1,27 @@
 <?php
-include 'koneksi.php';
+require_once __DIR__ . '/../db_gym/config/con-db.php';
+
+$database = new Database();
+$conn = $database->getConnection();
 
 $id = $_GET['id'];
 
 $query = "SELECT * FROM alat_gym WHERE id = '$id'";
-$result = mysqli_query($koneksi, $query);
+$result = mysqli_query($conn, $query);
 $row = mysqli_fetch_assoc($result);
 
 if (isset($_POST['update'])) {
     $nama_alat = $_POST['nama_alat'];
     $kategori = $_POST['kategori'];
     $jumlah_stok = $_POST['jumlah_stok'];
-    $kondisi = $_POST['kondisi'];
+    
+    // Trik Pengaman: Ambil input kondisi lalu konversi dan saring ke huruf kecil sesuai ENUM database
+    $input_kondisi = strtolower(trim($_POST['kondisi'])); 
+    if ($input_kondisi == 'baik' || $input_kondisi == 'bagus') {
+        $kondisi = 'baik';
+    } else {
+        $kondisi = 'rusak';
+    }
 
     $update_query = "UPDATE alat_gym SET 
                      nama_alat = '$nama_alat', 
@@ -20,10 +30,10 @@ if (isset($_POST['update'])) {
                      kondisi = '$kondisi' 
                      WHERE id = '$id'";
 
-    if (mysqli_query($koneksi, $update_query)) {
+    if (mysqli_query($conn, $update_query)) {
         echo "<script>alert('Data barang berhasil diubah!'); window.location='barang.php';</script>";
     } else {
-        echo "Gagal mengubah data: " . mysqli_error($koneksi);
+        echo "Gagal mengubah data: " . mysqli_error($conn);
     }
 }
 ?>
@@ -45,19 +55,20 @@ if (isset($_POST['update'])) {
         <input type="text" name="nama_alat" value="<?= $row['nama_alat']; ?>" required style="width: 100%; padding: 8px; margin-bottom: 15px;"><br>
 
         <label>Kategori Alat:</label><br>
-    <select name="kategori" style="width: 100%; padding: 8px; margin-bottom: 15px;">
-    <option value="kardio" <?= $row['kategori'] == 'kardio' ? 'selected' : ''; ?>>Kardio</option>
-    <option value="beban" <?= $row['kategori'] == 'beban' ? 'selected' : ''; ?>>Beban</option>
-    <option value="lainnya" <?= $row['kategori'] == 'lainnya' ? 'selected' : ''; ?>>Lainnya</option>
-    </select><br>
+        <select name="kategori" style="width: 100%; padding: 8px; margin-bottom: 15px;">
+            <option value="kardio" <?= $row['kategori'] == 'kardio' ? 'selected' : ''; ?>>Kardio</option>
+            <option value="beban" <?= $row['kategori'] == 'beban' ? 'selected' : ''; ?>>Beban</option>
+            <option value="lainnya" <?= $row['kategori'] == 'lainnya' ? 'selected' : ''; ?>>Lainnya</option>
+        </select><br>
 
         <label>Jumlah Stok:</label><br>
         <input type="number" name="jumlah_stok" value="<?= $row['jumlah_stok']; ?>" required style="width: 100%; padding: 8px; margin-bottom: 15px;"><br>
 
         <label>Status Kondisi:</label><br>
         <select name="kondisi" style="width: 100%; padding: 8px; margin-bottom: 20px;">
-            <option value="Baik" <?= $row['kondisi'] == 'Baik' ? 'selected' : ''; ?>>Baik</option>
-            <option value="Rusak" <?= $row['kondisi'] == 'Rusak' ? 'selected' : ''; ?>>Rusak</option>
+            <!-- Value diubah jadi huruf kecil ('baik' dan 'rusak') agar sinkron dengan pengecekan database -->
+            <option value="baik" <?= strtolower($row['kondisi']) == 'baik' ? 'selected' : ''; ?>>Baik</option>
+            <option value="rusak" <?= strtolower($row['kondisi']) == 'rusak' ? 'selected' : ''; ?>>Rusak</option>
         </select><br>
 
         <button type="submit" name="update" style="padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; border-radius: 4px;">Simpan Perubahan</button>

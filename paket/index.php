@@ -1,6 +1,9 @@
 <?php
 session_start();
-include "../../config/koneksi.php";
+require_once __DIR__ . '/../db_gym/config/con-db.php';
+
+$database = new Database();
+$conn = $database->getConnection();
 
 if (!isset($_SESSION['id'])) {
     header("Location: ../../auth/login.php");

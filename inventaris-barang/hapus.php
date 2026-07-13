@@ -1,5 +1,8 @@
 <?php
-include 'koneksi.php';
+require_once __DIR__ . '/../db_gym/config/con-db.php';
+
+$database = new Database();
+$koneksi = $database->getConnection();
 
 $id = $_GET['id'];
 

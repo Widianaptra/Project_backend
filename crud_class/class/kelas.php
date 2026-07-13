@@ -1,6 +1,8 @@
 <?php
+require_once __DIR__ . '/../../db_gym/config/con-db.php';
 
-require_once __DIR__ . '/../../../db_gym/config/con-db.php';
+$database = new Database();
+$conn = $database->getConnection();
 
 class Kelas extends Database
 {

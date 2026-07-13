@@ -1,8 +1,12 @@
 <?php
-include 'koneksi.php';
+require_once __DIR__ . '/../db_gym/config/con-db.php';
 
+$database = new Database();
+$conn = $database->getConnection(); // Variabel koneksi adalah $conn
+
+// Query diperbaiki agar menggunakan $conn, bukan $koneksi
 $query = "SELECT * FROM alat_gym";
-$result = mysqli_query($koneksi, $query);
+$result = mysqli_query($conn, $query); 
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +17,7 @@ $result = mysqli_query($koneksi, $query);
 </head>
 <body style="font-family: Arial, sans-serif; margin: 30px;">
 
-    <h2>Sistem Manajemen Inventaris Barang Gym</h2>
+    <h2>Inventaris Barang Gym</h2>
 
     <a href="tambah.php" style="padding: 8px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">+ Tambah Barang</a>
     <a href="laporan.php" style="padding: 8px 15px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; margin-left: 10px;">Cetak Laporan</a>
@@ -27,13 +31,13 @@ $result = mysqli_query($koneksi, $query);
             <th>Kategori</th>
             <th>Jumlah Stok</th>
             <th>Kondisi</th>
-            <th>Tanggal Pembelian</th>
             <th>Aksi</th>
         </tr>
 
         <?php
         $no = 1;
         if (mysqli_num_rows($result) == 0) {
+            // Colspan disesuaikan menjadi 7 sesuai jumlah kolom di atas
             echo "<tr><td colspan='7' align='center'>Belum ada data barang. Silakan tambah data baru.</td></tr>";
         } else {
             while ($row = mysqli_fetch_assoc($result)) {
@@ -44,7 +48,6 @@ $result = mysqli_query($koneksi, $query);
                     <td><?= $row['kategori']; ?></td>
                     <td align="center"><?= $row['jumlah_stok']; ?></td>
                     <td align="center"><strong><?= $row['kondisi']; ?></strong></td>
-                    <td align="center"><?= $row['tanggal_pembelian']; ?></td>
                     <td align="center">
                         <a href="edit.php?id=<?= $row['id']; ?>" style="color: #007bff; text-decoration: none;">Edit</a> | 
                         <a href="hapus.php?id=<?= $row['id']; ?>" style="color: #dc3545; text-decoration: none;" onclick="return confirm('Yakin ingin menghapus data ini?')">Hapus</a>

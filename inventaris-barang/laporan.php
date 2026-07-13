@@ -1,5 +1,8 @@
 <?php
-include 'koneksi.php';
+require_once __DIR__ . '/../db_gym/config/con-db.php';
+
+$database = new Database();
+$koneksi = $database->getConnection();
 
 $query = "SELECT * FROM alat_gym";
 $result = mysqli_query($koneksi, $query);
@@ -35,7 +38,6 @@ $result = mysqli_query($koneksi, $query);
                 <th>Kategori</th>
                 <th class="text-center">Jumlah Stok</th>
                 <th class="text-center">Kondisi</th>
-                <th class="text-center">Tanggal Pembelian</th>
             </tr>
         </thead>
         <tbody>
@@ -52,7 +54,6 @@ $result = mysqli_query($koneksi, $query);
                         <td><?= $row['kategori']; ?></td>
                         <td class="text-center"><?= $row['jumlah_stok']; ?></td>
                         <td class="text-center"><?= $row['kondisi']; ?></td>
-                        <td class="text-center"><?= $row['tanggal_pembelian']; ?></td>
                     </tr>
             <?php
                 }

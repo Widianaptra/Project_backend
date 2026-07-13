@@ -1,12 +1,14 @@
 <?php
+require_once __DIR__ . '/../db_gym/config/con-db.php';
 
-include "../config/koneksi.php";
+$database = new Database();
+$conn = $database->getConnection();
 
 $nama_lengkap = trim($_POST['nama_lengkap']);
 $email = trim($_POST['email']);
 $password = $_POST['password'];
 $confirm_password = $_POST['confirm_password'];
-$role = $_POST['role'];
+$role = strtolower(trim($_POST['role']));
 
 // Validasi email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -52,6 +54,10 @@ if (mysqli_num_rows($cek) > 0) {
     </script>";
 
     exit;
+}
+
+if ($role == 'customer') {
+    $role = 'customers';
 }
 
 // Simpan ke database

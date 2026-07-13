@@ -6,7 +6,8 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-if ($_SESSION['role'] != 'admin') {
+// strtolower() untuk mengubah 'Admin' menjadi 'admin' sebelum dicek
+if (strtolower($_SESSION['role']) != 'admin') {
     echo "<script>
         alert('Akses ditolak! Hanya admin yang dapat membuka halaman ini.');
         window.location='../auth/login.php';
@@ -23,7 +24,6 @@ if ($_SESSION['role'] != 'admin') {
     <title>Dashboard Admin</title>
 
     <style>
-
         *{
             margin:0;
             padding:0;
@@ -87,7 +87,7 @@ if ($_SESSION['role'] != 'admin') {
 
         .cards{
             display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
             gap:20px;
         }
 
@@ -98,6 +98,9 @@ if ($_SESSION['role'] != 'admin') {
             box-shadow:0 5px 15px rgba(0,0,0,.08);
             transition:.3s;
             cursor:pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .card:hover{
@@ -117,6 +120,62 @@ if ($_SESSION['role'] != 'admin') {
         .card p{
             color:#666;
             font-size:14px;
+            margin-bottom: 15px;
+        }
+
+        /* Grouping untuk membungkus tombol di dalam card */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none; 
+            border-radius: 6px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-tambah {
+            background-color: #16a34a; 
+            color: white;
+            border: 1px solid #15803d;
+        }
+
+        .btn-tambah:hover {
+            background-color: #15803d; 
+        }
+
+        .btn-lihat {
+            background-color: #ffffff;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-lihat:hover {
+            background-color: #f9fafb;
+            color: #111827;
+        }
+
+        .btn-inventory {
+            background-color: #4b5563;
+            color: white;
+            border: 1px solid #374151;
+        }
+
+        .btn-inventory:hover {
+            background-color: #374151;
+        }
+
+        .btn:active {
+            transform: scale(0.98); 
         }
 
         footer{
@@ -124,72 +183,65 @@ if ($_SESSION['role'] != 'admin') {
             margin:40px 0;
             color:#777;
         }
-
     </style>
-
 </head>
 
 <body>
 
 <div class="navbar">
-
-    <h2> Gym Management System</h2>
-
-    <a class="logout" href="../auth/logout.php">
-        Logout
-    </a>
-
+    <h2>Gym Management System</h2>
+    <a class="logout" href="../auth/logout.php">Logout</a>
 </div>
 
 <div class="container">
-
     <div class="welcome">
-
-    <h1>Selamat Datang!</h1>
-
-    <h3><?php echo $_SESSION['username']; ?></h3>
-
-    <p>
-        Login sebagai
-        <strong><?php echo ucfirst($_SESSION['role']); ?></strong>
-    </p>
-
-</div>
-
-    <div class="cards">
-
-        <div class="card">
-            <div class="icon">👥</div>
-            <h3>Data Member</h3>
-            <p>Mengelola data seluruh member gym.</p>
-        </div>
-
-        <div class="card">
-            <div class="icon">🏋️</div>
-            <h3>Data Kelas</h3>
-            <p>Mengelola kelas dan trainer.</p>
-        </div>
-
-        <div class="card">
-            <div class="icon">💳</div>
-            <h3>Paket Member</h3>
-            <p>Mengelola paket dan masa aktif member.</p>
-        </div>
-
-        <div class="card">
-            <div class="icon">📅</div>
-            <h3>Jadwal</h3>
-            <p>Mengelola jadwal kelas dan latihan.</p>
-        </div>
-
+        <h1>Selamat Datang!</h1>
+        <h3><?php echo htmlspecialchars($_SESSION['username']); ?></h3>
+        <p>
+            Login sebagai
+            <strong><?php echo ucfirst($_SESSION['role']); ?></strong>
+        </p>
     </div>
 
+    <div class="cards">
+        <!-- CARD 1: DATA KELAS -->
+        <div class="card">
+            <div>
+                <div class="icon">🏋️</div>
+                <h3>Data Kelas</h3>
+                <p>Mengelola penjadwalan kelas, kapasitas, dan instruktur senam/fitness.</p>
+            </div>
+            <div class="btn-group">
+                <a href="../crud_class/create.php" class="btn btn-tambah">
+                    + Tambah Kelas Baru
+                </a>
+                <a href="../crud_class/index_kelas.php" class="btn btn-lihat">
+                    👁️ Lihat Daftar Kelas
+                </a>
+            </div>
+        </div>
+
+        <!-- CARD 2: INVENTARIS ALAT -->
+        <div class="card">
+            <div>
+                <div class="icon">🛠️</div>
+                <h3>Inventaris Alat</h3>
+                <p>Mencatat, memantau kondisi, dan mengelola daftar seluruh alat fitness di area gym.</p>
+            </div>
+            <div class="btn-group">
+                <a href="../crud_inventory/create.php" class="btn btn-inventory">
+                    + Tambah Alat Baru
+                </a>
+                <a href="../crud_inventory/index.php" class="btn btn-lihat">
+                    👁️ Lihat Daftar Alat
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <footer>
-
     © 2026 Gym Management System
-
 </footer>
 
 </body>

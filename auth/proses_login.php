@@ -1,7 +1,10 @@
 <?php
 
 session_start();
-include "../config/koneksi.php";
+require_once __DIR__ . '/../db_gym/config/con-db.php';
+
+$database = new Database();
+$conn = $database->getConnection();
 
 $email = $_POST['email'];
 $password = $_POST['password'];
@@ -19,7 +22,12 @@ if(mysqli_num_rows($query) > 0){
         $_SESSION['username'] = $user['nama_lengkap']; // For dashboard compatibility
         $_SESSION['role'] = $user['role'];
 
-        header("Location: ../Dashboard/admin.php");
+        if (strtolower($_SESSION['role']) == 'admin') {
+            header("Location: ../Dashboard/admin.php");
+        } else {
+            // Jika role berisi 'Customers' atau 'Member', arahkan ke customers.php
+            header("Location: ../Dashboard/customers.php");
+        }
         exit;
 
     }else{

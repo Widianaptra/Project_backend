@@ -35,7 +35,6 @@ CREATE TABLE `alat_gym` (
   `kategori` enum('kardio','beban','lainnya') COLLATE utf8mb4_general_ci DEFAULT 'lainnya',
   `jumlah_stok` int DEFAULT '0',
   `kondisi` enum('baik','rusak') COLLATE utf8mb4_general_ci DEFAULT 'baik',
-  `tanggal_pembelian` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -102,6 +101,11 @@ CREATE TABLE `paket` (
   `durasi_bulan` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+INSERT INTO `paket` (`id`, `nama_paket`, `harga`, `durasi_bulan`) VALUES
+(1, 'Paket Ekonomi', 150000, 1),
+(2, 'Paket Standar', 400000, 3),
+(3, 'Paket Pro (Best Seller)', 750000, 6);
 -- --------------------------------------------------------
 
 --
@@ -127,7 +131,7 @@ CREATE TABLE `users` (
   `nama_lengkap` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `role` enum('Admin','Campaigner','Donatur','Verifikator') COLLATE utf8mb4_general_ci NOT NULL,
+  `role` enum('admin','customers', 'member') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'customers',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -136,7 +140,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `nama_lengkap`, `email`, `password`, `role`, `created_at`) VALUES
-(1, 'Admin Utama', 'admin@gym.com', 'admin123', 'Admin', '2026-07-02 22:49:31');
+(1, 'Admin Utama', 'admin@gym.com', 'admin123', 'admin', '2026-07-02 22:49:31');
 
 --
 -- Indexes for dumped tables
