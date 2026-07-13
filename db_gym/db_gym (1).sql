@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 06, 2026 at 11:50 AM
+-- Generation Time: Jul 13, 2026 at 03:05 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -39,20 +39,6 @@ CREATE TABLE `alat_gym` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jadwal`
---
-
-CREATE TABLE `jadwal` (
-  `id` int NOT NULL,
-  `kelas_id` int NOT NULL,
-  `hari` enum('Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu') COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `jam_mulai` time DEFAULT NULL,
-  `jam_selesai` time DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `kelas`
 --
 
@@ -60,9 +46,18 @@ CREATE TABLE `kelas` (
   `id` int NOT NULL,
   `nama_kelas` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `deskripsi` text COLLATE utf8mb4_general_ci,
+  `hari` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `jam` time NOT NULL,
   `kuota` int DEFAULT NULL,
   `nama_trainer` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `kelas`
+--
+
+INSERT INTO `kelas` (`id`, `nama_kelas`, `deskripsi`, `hari`, `jam`, `kuota`, `nama_trainer`) VALUES
+(2, 'Zumba', 'Zumba bersama menuju indonesia atletis 2045!', 'Minggu', '08:00:00', 20, 'Christina Putri');
 
 -- --------------------------------------------------------
 
@@ -77,6 +72,19 @@ CREATE TABLE `members` (
   `alamat` text COLLATE utf8mb4_general_ci,
   `telepon` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tanggal_gabung` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `member_kelas`
+--
+
+CREATE TABLE `member_kelas` (
+  `id` int NOT NULL,
+  `member_id` int NOT NULL,
+  `kelas_id` int NOT NULL,
+  `tanggal_daftar` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -138,13 +146,6 @@ ALTER TABLE `alat_gym`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `jadwal`
---
-ALTER TABLE `jadwal`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `kelas_id` (`kelas_id`);
-
---
 -- Indexes for table `kelas`
 --
 ALTER TABLE `kelas`
@@ -156,6 +157,14 @@ ALTER TABLE `kelas`
 ALTER TABLE `members`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `member_kelas`
+--
+ALTER TABLE `member_kelas`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `member_id` (`member_id`,`kelas_id`),
+  ADD KEY `fk_kelas` (`kelas_id`);
 
 --
 -- Indexes for table `paket`
@@ -189,21 +198,21 @@ ALTER TABLE `alat_gym`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `jadwal`
---
-ALTER TABLE `jadwal`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `kelas`
 --
 ALTER TABLE `kelas`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `members`
 --
 ALTER TABLE `members`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `member_kelas`
+--
+ALTER TABLE `member_kelas`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
@@ -229,16 +238,17 @@ ALTER TABLE `users`
 --
 
 --
--- Constraints for table `jadwal`
---
-ALTER TABLE `jadwal`
-  ADD CONSTRAINT `jadwal_ibfk_1` FOREIGN KEY (`kelas_id`) REFERENCES `kelas` (`id`) ON DELETE CASCADE;
-
---
 -- Constraints for table `members`
 --
 ALTER TABLE `members`
   ADD CONSTRAINT `members_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `member_kelas`
+--
+ALTER TABLE `member_kelas`
+  ADD CONSTRAINT `fk_kelas` FOREIGN KEY (`kelas_id`) REFERENCES `kelas` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_member` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `transaksi`
