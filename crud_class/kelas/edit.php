@@ -1,93 +1,79 @@
 <?php
 // Proses edit data
-include '../config/con-db.php';
+require_once __DIR__ . '/class/kelas.php';
 
 $error = "";
 
 // Ambil ID dari URL
 if (isset($_GET['id'])) {
-
     $id = $_GET['id'];
-
+    
     try {
-
-        // Ambil data berdasarkan ID
-        $sql = "SELECT * FROM kelas WHERE id = :id";
-
-        $stmt = $pdo->prepare($sql);
-
-        $stmt->execute([
-            ':id' => $id
-        ]);
-
-        $kelas = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        $kelasObj = new Kelas();
+        $kelas_ditemukan = $kelasObj->getById($id);
+        
         // Jika data tidak ditemukan
-        if (!$kelas) {
-            header("Location: index.php");
+        if (!$kelas_ditemukan) {
+            header("Location: index_kelas.php");
             exit;
         }
-
-    } catch (PDOException $e) {
-
+    } catch (Exception $e) {
         $error = "Gagal mengambil data: " . $e->getMessage();
-
     }
-
 } else {
-
-    header("Location: index.php");
+    header("Location: index_kelas.php");
     exit;
-
 }
 
 // Proses update data
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $nama_kelas = trim($_POST['nama_kelas']);
-    $deskripsi  = trim($_POST['deskripsi']);
-    $durasi     = $_POST['durasi'];
+    $nama_kelas   = trim($_POST['nama_kelas']);
+    $deskripsi    = trim($_POST['deskripsi']);
+    $hari         = trim($_POST['hari']);
+    $jam          = trim($_POST['jam']);
+    $kuota        = trim($_POST['kuota']);
+    $nama_trainer = trim($_POST['nama_trainer']);
 
     // Validasi
-    if (!empty($nama_kelas) && !empty($durasi)) {
-
+    if (
+        $nama_kelas != "" &&
+        $hari != "" &&
+        $jam != "" &&
+        $kuota != "" &&
+        $nama_trainer != ""
+    ) {
         try {
+            $result = $kelasObj->update(
+                $id,
+                $nama_kelas,
+                $deskripsi,
+                $hari,
+                $jam,
+                $kuota,
+                $nama_trainer
+            );
 
-            $sql = "UPDATE kelas
-                    SET nama_kelas = :nama_kelas,
-                        deskripsi = :deskripsi,
-                        durasi = :durasi
-                    WHERE id = :id";
-
-            $stmt = $pdo->prepare($sql);
-
-            $stmt->execute([
-                ':nama_kelas' => $nama_kelas,
-                ':deskripsi'  => $deskripsi,
-                ':durasi'     => $durasi,
-                ':id'         => $id
-            ]);
-
-            // Redirect setelah berhasil
-            header("Location: index.php?update=1");
-            exit;
-
-        } catch (PDOException $e) {
-
+            if ($result) {
+                // Redirect setelah berhasil
+                header("Location: index_kelas.php?update=1");
+                exit;
+            } else {
+                $error = "Gagal mengubah data kelas.";
+            }
+        } catch (Exception $e) {
             $error = "Gagal mengubah data: " . $e->getMessage();
-
         }
-
     } else {
-
-        $error = "Nama kelas dan durasi wajib diisi.";
-
+        $error = "Semua data wajib diisi (kecuali deskripsi).";
     }
 
     // Update data yang ditampilkan jika terjadi error
-    $kelas['nama_kelas'] = $nama_kelas;
-    $kelas['deskripsi']  = $deskripsi;
-    $kelas['durasi']     = $durasi;
+    $kelas_ditemukan['nama_kelas']   = $nama_kelas;
+    $kelas_ditemukan['deskripsi']    = $deskripsi;
+    $kelas_ditemukan['hari']         = $hari;
+    $kelas_ditemukan['jam']          = $jam;
+    $kelas_ditemukan['kuota']        = $kuota;
+    $kelas_ditemukan['nama_trainer'] = $nama_trainer;
 }
 ?>
 
@@ -106,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .container {
-            max-width: 600px;
+            max-width: 650px;
             margin: auto;
             background: white;
             padding: 30px;
@@ -130,8 +116,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         input[type=text],
-        textarea,
-        select {
+        input[type=number],
+        input[type=time],
+        select,
+        textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -194,42 +182,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input
                 type="text"
                 name="nama_kelas"
-                value="<?= htmlspecialchars($kelas['nama_kelas']) ?>"
+                value="<?= htmlspecialchars($kelas_ditemukan['nama_kelas'] ?? '') ?>"
                 required>
         </div>
 
         <div class="form-group">
-            <label>Durasi</label>
-            <select name="durasi" required>
-                <option value="">-- Pilih Durasi --</option>
-                <option value="30 Menit" <?= $kelas['durasi'] == '30 Menit' ? 'selected' : '' ?>>30 Menit</option>
-                <option value="45 Menit" <?= $kelas['durasi'] == '45 Menit' ? 'selected' : '' ?>>45 Menit</option>
-                <option value="60 Menit" <?= $kelas['durasi'] == '60 Menit' ? 'selected' : '' ?>>60 Menit</option>
-                <option value="90 Menit" <?= $kelas['durasi'] == '90 Menit' ? 'selected' : '' ?>>90 Menit</option>
+            <label>Deskripsi</label>
+            <textarea name="deskripsi"><?= htmlspecialchars($kelas_ditemukan['deskripsi'] ?? '') ?></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Hari</label>
+            <select name="hari" required>
+                <option value="">-- Pilih Hari --</option>
+                <?php
+                $hariList = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+                foreach($hariList as $h){
+                    $selected = (($kelas_ditemukan['hari'] ?? '') == $h) ? "selected" : "";
+                    echo "<option value=\"$h\" $selected>$h</option>";
+                }
+                ?>
             </select>
         </div>
 
         <div class="form-group">
-<<<<<<< HEAD
-            <label>Deskripsi</label>
-            <textarea name="deskripsi"><?= htmlspecialchars($kelas['deskripsi']) ?></textarea>
-=======
-            <label for="deskripsi">Deskripsi Kelas</label>
-            <textarea id="deskripsi" name="deskripsi"><?= htmlspecialchars($kelas_ditemukan['deskripsi']); ?></textarea>
->>>>>>> a1cff84 (Perbaikan CRUD kelas)
+            <label>Jam</label>
+            <input
+                type="time"
+                name="jam"
+                value="<?= htmlspecialchars($kelas_ditemukan['jam'] ?? '') ?>"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label>Kuota</label>
+            <input
+                type="number"
+                name="kuota"
+                min="1"
+                value="<?= htmlspecialchars($kelas_ditemukan['kuota'] ?? '') ?>"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label>Nama Trainer</label>
+            <input
+                type="text"
+                name="nama_trainer"
+                value="<?= htmlspecialchars($kelas_ditemukan['nama_trainer'] ?? '') ?>"
+                required>
         </div>
 
         <div class="btn-group">
-            <a href="index.php" class="btn btn-kembali">Batal</a>
+            <a href="index_kelas.php" class="btn btn-kembali">Batal</a>
             <button type="submit" class="btn btn-update">Update Kelas</button>
         </div>
-<<<<<<< HEAD
-
     </form>
-
-=======
-    </form>
->>>>>>> a1cff84 (Perbaikan CRUD kelas)
 </div>
 
 </body>
