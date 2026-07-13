@@ -21,8 +21,8 @@ SET time_zone = "+00:00";
 -- Database: `db_gym`
 --
 
-CREATE DATABASE IF NOT EXISTS 'db_gym';
-USE 'db_gym';
+CREATE DATABASE IF NOT EXISTS `db_gym`;
+USE `db_gym`;
 
 -- --------------------------------------------------------
 
