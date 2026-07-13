@@ -53,7 +53,7 @@ if ($qTransaksi) {
         $mail->Host       = 'smtp.gmail.com';                     // Set the SMTP server to send through
         $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
         $mail->Username   = 'emailanda@gmail.com';                  // SMTP username (GANTI DENGAN EMAIL ANDA)
-        $mail->Password   = 'password_aplikasi_anda';               // SMTP password (GANTI DENGAN APP PASSWORD)
+        $mail->Password   = 'gltn zvgm bmsm rcoi';               // SMTP password (GANTI DENGAN APP PASSWORD)
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable implicit TLS encryption
         $mail->Port       = 587;                                    // TCP port to connect to
 
