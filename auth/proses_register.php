@@ -2,16 +2,17 @@
 
 include "../config/koneksi.php";
 
-$username = trim($_POST['username']);
+$nama_lengkap = trim($_POST['nama_lengkap']);
+$email = trim($_POST['email']);
 $password = $_POST['password'];
 $confirm_password = $_POST['confirm_password'];
 $role = $_POST['role'];
 
-// Validasi username minimal 4 karakter
-if (strlen($username) < 4) {
+// Validasi email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
     echo "<script>
-    alert('Username minimal 4 karakter!');
+    alert('Format email tidak valid!');
     window.location='register.php';
     </script>";
 
@@ -40,13 +41,13 @@ if ($password != $confirm_password) {
     exit;
 }
 
-// Cek username sudah ada atau belum
-$cek = mysqli_query($conn, "SELECT * FROM users WHERE username='$username'");
+// Cek email sudah ada atau belum
+$cek = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
 
 if (mysqli_num_rows($cek) > 0) {
 
     echo "<script>
-    alert('Username sudah digunakan!');
+    alert('Email sudah digunakan!');
     window.location='register.php';
     </script>";
 
@@ -54,8 +55,8 @@ if (mysqli_num_rows($cek) > 0) {
 }
 
 // Simpan ke database
-$query = mysqli_query($conn, "INSERT INTO users(username, password, role)
-VALUES('$username', '$password', '$role')");
+$query = mysqli_query($conn, "INSERT INTO users(nama_lengkap, email, password, role)
+VALUES('$nama_lengkap', '$email', '$password', '$role')");
 
 if ($query) {
 

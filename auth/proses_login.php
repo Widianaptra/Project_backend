@@ -3,10 +3,10 @@
 session_start();
 include "../config/koneksi.php";
 
-$username = $_POST['username'];
+$email = $_POST['email'];
 $password = $_POST['password'];
 
-$query = mysqli_query($conn, "SELECT * FROM users WHERE username='$username'");
+$query = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
 
 if(mysqli_num_rows($query) > 0){
 
@@ -14,8 +14,9 @@ if(mysqli_num_rows($query) > 0){
 
     if($password == $user['password']){
 
-        $_SESSION['id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
+        $_SESSION['id'] = $user['id_user'];
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['username'] = $user['nama_lengkap']; // For dashboard compatibility
         $_SESSION['role'] = $user['role'];
 
         header("Location: ../admin/dashboard.php");
@@ -33,7 +34,7 @@ if(mysqli_num_rows($query) > 0){
 }else{
 
     echo "<script>
-    alert('Username tidak ditemukan!');
+    alert('Email tidak ditemukan!');
     window.location='login.php';
     </script>";
 

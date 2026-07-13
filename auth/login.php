@@ -117,12 +117,12 @@
 
     <form action="proses_login.php" method="POST">
 
-        <label>Username</label>
+        <label>Email</label>
 
         <input
-        type="text"
-        name="username"
-        placeholder="Masukkan username"
+        type="email"
+        name="email"
+        placeholder="Masukkan email"
         required>
 
         <label>Password</label>

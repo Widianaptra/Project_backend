@@ -121,12 +121,20 @@
 
     <form action="proses_register.php" method="POST">
 
-        <label>Username</label>
+        <label>Nama Lengkap</label>
 
         <input
         type="text"
-        name="username"
-        placeholder="Masukkan username"
+        name="nama_lengkap"
+        placeholder="Masukkan nama lengkap"
+        required>
+
+        <label>Email</label>
+
+        <input
+        type="email"
+        name="email"
+        placeholder="Masukkan email"
         required>
 
         <label>Password</label>
