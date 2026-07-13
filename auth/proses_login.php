@@ -19,7 +19,7 @@ if(mysqli_num_rows($query) > 0){
         $_SESSION['username'] = $user['nama_lengkap']; // For dashboard compatibility
         $_SESSION['role'] = $user['role'];
 
-        header("Location: ../admin/dashboard.php");
+        header("Location: ../Dashboard/admin.php");
         exit;
 
     }else{
