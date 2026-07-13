@@ -21,7 +21,8 @@ SET time_zone = "+00:00";
 -- Database: `db_gym`
 --
 
-CREATE DATABASE db_gym
+CREATE DATABASE IF NOT EXISTS 'db_gym';
+USE 'db_gym'
 
 -- --------------------------------------------------------
 
@@ -123,9 +124,10 @@ CREATE TABLE `transaksi` (
 --
 
 CREATE TABLE `users` (
-  `id` int NOT NULL,
+  `id_user` int NOT NULL,
   `username` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  'email' varchar(100) COLLATE utf8mb4_general_ci NOT NULL
   `role` enum('admin','member','customer') COLLATE utf8mb4_general_ci DEFAULT 'customer',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -134,7 +136,7 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`) VALUES
+INSERT INTO `users` (`id_user`, `username`, `password`, 'email',`role`, `created_at`) VALUES
 (1, 'admin_gym', 'admin123', 'admin', '2026-07-02 22:49:31');
 
 --
