@@ -23,7 +23,6 @@ SET time_zone = "+00:00";
 
 CREATE DATABASE IF NOT EXISTS `db_gym`;
 USE `db_gym`;
-
 -- --------------------------------------------------------
 
 --
@@ -125,10 +124,10 @@ CREATE TABLE `transaksi` (
 
 CREATE TABLE `users` (
   `id_user` int NOT NULL,
-  `username` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `nama_lengkap` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  'email' varchar(100) COLLATE utf8mb4_general_ci NOT NULL
-  `role` enum('admin','member','customer') COLLATE utf8mb4_general_ci DEFAULT 'customer',
+  `role` enum('Admin','Campaigner','Donatur','Verifikator') COLLATE utf8mb4_general_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -136,8 +135,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id_user`, `username`, `password`, 'email',`role`, `created_at`) VALUES
-(1, 'admin_gym', 'admin123', 'admin', '2026-07-02 22:49:31');
+INSERT INTO `users` (`id_user`, `nama_lengkap`, `email`, `password`, `role`, `created_at`) VALUES
+(1, 'Admin Utama', 'admin@gym.com', 'admin123', 'Admin', '2026-07-02 22:49:31');
 
 --
 -- Indexes for dumped tables
@@ -188,8 +187,8 @@ ALTER TABLE `transaksi`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD PRIMARY KEY (`id_user`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -235,7 +234,7 @@ ALTER TABLE `transaksi`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -245,7 +244,7 @@ ALTER TABLE `users`
 -- Constraints for table `members`
 --
 ALTER TABLE `members`
-  ADD CONSTRAINT `members_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `members_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id_user`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `member_kelas`
