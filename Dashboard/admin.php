@@ -229,10 +229,10 @@ if (strtolower($_SESSION['role']) != 'admin') {
                 <p>Mencatat, memantau kondisi, dan mengelola daftar seluruh alat fitness di area gym.</p>
             </div>
             <div class="btn-group">
-                <a href="../crud_inventory/create.php" class="btn btn-inventory">
+                <a href="../inventaris-barang/tambah.php" class="btn btn-inventory">
                     + Tambah Alat Baru
                 </a>
-                <a href="../crud_inventory/index.php" class="btn btn-lihat">
+                <a href="../inventaris-barang/barang.php" class="btn btn-lihat">
                     👁️ Lihat Daftar Alat
                 </a>
             </div>

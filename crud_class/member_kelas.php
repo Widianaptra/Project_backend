@@ -1,11 +1,10 @@
 <?php
 
-require_once __DIR__ . '/kelas/class/Kelas.php';
+
+require_once __DIR__ . '/class/kelas.php';
 $kelas = new Kelas();
 $dataKelas = $kelas->read();
-
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -147,7 +146,7 @@ if($dataKelas && $dataKelas->num_rows > 0){
     </div>
 
 <?php if($row['kuota'] > 0){ ?>
-<a href="kelas//class/ambil.php?id=<?= $row['id']; ?>"class="btn">Ambil Kelas</a>
+<a href="class/ambil-class.php?id=<?= $row['id']; ?>" class="btn">Ambil Kelas</a>
 
 <?php } else { ?>
 <button class="btn penuh"disabled>Kelas Penuh</button>
